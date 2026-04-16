@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fotogram</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a href="#gallery" class="skip-link">Zum Inhalt springen</a>
+
+    <header>
+      <div class="logo-area">
+        <img src="./img/fotogram-icon.png" alt="Fotogram Logo" />
+        <h1>Fotogram</h1>
+      </div>
+    </header>
+
+    <main id="gallery" class="gallery">
+      <h2>Your personal photo album</h2>
+      <div id="photo-grid" class="photo-grid"></div>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Johanna Kohlberger</p>
+    </footer>
+
+    <div id="photo-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-caption">
+      <div class="modal-frame">
+        <div class="modal-main-content">
+          <div class="modal-header-bar">
+            <h3 id="modal-caption"></h3>
+            <span class="close-modal">&times;</span>
+          </div>
+
+          <div class="modal-image-container">
+            <img id="modal-img" src="" alt="" />
+          </div>
+        </div>
+
+        <div class="modal-controls">
+          <button id="prev-photo" class="control-btn" aria-label="Vorheriges Bild">&lt;</button>
+          <span id="photo-counter" class="photo-counter"></span>
+          <button id="next-photo" class="control-btn" aria-label="Nächstes Bild">&gt;</button>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
