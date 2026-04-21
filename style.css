@@ -3,6 +3,10 @@
     src: url(./fonts/Figtree-VariableFont_wght.woff2);
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: Figtree, sans-serif;
     margin: 0;
@@ -41,6 +45,24 @@ header {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.header-back-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+.header-back-link:hover {
+    opacity: 0.8;
+}
+
+.header-back-link:focus-visible {
+    outline: 2px solid #ffd700;
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
 .logo-area {
     display: flex;
     align-items: center;
@@ -68,6 +90,7 @@ header {
     margin: 0 auto;
     width: 100%;
     box-sizing: border-box;
+    padding-bottom: 150px; /* Extra space for footer */
 }
 
 h2 {
@@ -82,7 +105,7 @@ h2 {
     grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 43%, 200px), 1fr));
     gap: 15px;
     width: 100%;
-    padding-bottom: calc(60px + 5vh + 20px); /* Create Space for Footer */;
+    padding-bottom: 0;
 }
 
 .photo-item {
@@ -210,8 +233,8 @@ h3 {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap:30px;
-    padding: 20px 30px 30px 30px;
+    gap:clamp(10px, 4vw, 30px);
+    padding: 20px 20px 30px 30px;
     width: 100%;
     box-sizing: border-box;
    
@@ -242,8 +265,9 @@ h3 {
 .photo-counter {
     letter-spacing: 1px;
     color: #e0eadd;
-    font-size: 18px;
+    font-size: clamp(14px, 4vw 18px);
     opacity: 0.8;
+    white-space: nowrap;
 }
 
 @media (max-width:700px) {
@@ -305,16 +329,18 @@ h3 {
 }
 
 footer {
+    box-sizing: border-box;
     background-color: #162c1e;
     color: #e0eadd;
     text-align: center;
-    padding: 40px 10px 10px 10px;
+    padding: 15px 10px;
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 50px;
+    height: 80px;
     border-top-left-radius: 100% 30px;
     border-top-right-radius: 100% 30px;
     box-shadow: 0 -4px 15px rgba(0,0,0,0.4);
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 200;
 }
