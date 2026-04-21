@@ -33,13 +33,13 @@ body {
 header {
     background-color: #162c1e;
     color: #e0eadd;
-    padding: 20px;
+    padding: 0 20px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     position: sticky;
     top: 0;
-    height: 30px;
+    height: 70px;
     z-index: 100;
     box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -50,6 +50,7 @@ header {
     color: inherit;
     display: flex;
     align-items: center;
+    height: 100%;
     transition: opacity 0.3s ease;
 }
 
@@ -265,7 +266,7 @@ h3 {
 .photo-counter {
     letter-spacing: 1px;
     color: #e0eadd;
-    font-size: clamp(14px, 4vw 18px);
+    font-size: clamp(14px, 4vw, 18px);
     opacity: 0.8;
     white-space: nowrap;
 }
