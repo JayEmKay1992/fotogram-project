@@ -109,6 +109,22 @@ h2 {
     padding-bottom: 0;
 }
 
+@media (min-width:1100px) and (max-width: 1299px) {
+    .photo-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+@media (min-width: 1300px) {
+    .photo-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .photo-item:nth-child(8) {
+        grid-column-start: 2;
+    }
+}
+
 .photo-item {
     width: 100%;
     aspect-ratio: 1 / 1;
