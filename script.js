@@ -1,3 +1,5 @@
+/* 1. Array mit Bilddaten für die Galerie, meine "Basisdaten" */
+
 const images = [
     {id: "cherry-blossoms", url: "./img/cherry-blossoms.jpg", title: "Cherry Blossom", alt: "Kirschblüten am Baum"},
     {id: "coastal-path", url: "./img/coastal-path.jpg", title: "Coastal Path", alt: "Klippenpfad am Meer"},
@@ -13,188 +15,154 @@ const images = [
     {id: "wave", url: "./img/wave.jpg", title: "Wave", alt: "Welle"}
 ];
 
-const shuffledImages = [...images].sort(() => 0.5 - Math.random());
-let currentPhotoIndex = 0;
+/* Globale Variablen (Global Scope) für den Zugriff durch jede nachfolgende Funktion */
 
-const photoGrid = document.getElementById("photo-grid");
-const modal = document.getElementById("photo-modal");
-const modalImg = document.getElementById("modal-img");
-const modalCaption = document.getElementById("modal-caption");
-const photoCounter = document.getElementById("photo-counter");
-const closeModal = document.querySelector(".close-modal");
-const prevBtn = document.getElementById("prev-photo");
-const nextBtn = document.getElementById("next-photo");
-const likeBtn = document.getElementById("like-button");
-const heartIcon = document.getElementById("heart-icon");
+let shuffledImages = []; // Array für die zufällig angeordneten Bilder, quasi eine "softe Kopie" des originalen images-Arrays, das ich mischen kann, ohne die Originalreihenfolge zu verändern
+let currentPhotoIndex = 0; // Index des aktuell angezeigten Fotos im Modal
+
+function init() {
+    shuffledImages = [...images].sort(() => 0.5 - Math.random()); // Bilder zufällig anordnen, indem ich eine Kopie des originalen images-Arrays erstelle und diese mische
+    renderGallery();
+    setupEventListeners();
+}
 
 function renderGallery() {
-    if (!photoGrid) {
-        console.error("Photo grid element not found");
-        return;
-    }
+    const photoGrid = document.getElementById("photo-grid");
 
-    photoGrid.innerHTML = ""; // Clear existing content  
+    let galleryHTML = ""; // Variable für die HTML-Struktur der Galerie
 
-    shuffledImages.forEach((imgData, index) => {
-        const item = document.createElement("div");
-        item.classList.add("photo-item");
-
-        item.tabIndex = 0; // Make div focusable for accessibility
-
-        item.setAttribute("role", "button"); // Set role for screen readers
-        item.setAttribute("aria-label", `Open photo: ${imgData.title}`); // Add aria-label for screen readers
-
-        item.innerHTML = `
-            <img src="${imgData.url}" alt="${imgData.alt}" title="${imgData.title}">
-            `;  
-
-        item.addEventListener("click", () => {
-            currentPhotoIndex = index;
-            openModal(imgData);
-        });
-
-        item.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault(); // Prevent default scroll behavior for space key
-                currentPhotoIndex = index;
-                openModal(imgData);
-            }
-        });
-
-        photoGrid.appendChild(item);
+    shuffledImages.forEach((img, index) => {
+        galleryHTML += `
+            <div class="photo-item" tabindex="0" role="button" onclick="openModal(${index})">
+                <img src="${img.url}" alt="${img.alt}" title="${img.title}">
+            </div>
+        `; // HTML-Struktur für jedes Bild in der Galerie erstellen
     });
+
+    photoGrid.innerHTML = galleryHTML; // HTML-Struktur in das DOM einfügen
 }
 
-function openModal(imgData) {
-    modal.style.display = "flex";
-    const currentImgData = shuffledImages[currentPhotoIndex];
-    modalImg.src = currentImgData.url;
-    modalImg.alt = currentImgData.alt;
-    modalCaption.textContent = currentImgData.title;
+/* Nachfolgend erstelle ich die Funktion für das Modal, das geöffnet wird, 
+wenn ein Bild angeklickt wird. Diese Funktion erhält den Index des angeklickten Bildes als Parameter, 
+damit ich die entsprechenden Daten aus dem shuffledImages-Array abrufen kann. */
 
-    photoCounter.textContent = `${currentPhotoIndex + 1} / ${shuffledImages.length}`;
+function openModal (index) {
+    currentPhotoIndex = index; // Aktuellen Index des angeklickten Bildes speichern
 
-    document.addEventListener("keydown", trapFocus);
+    const imgData = shuffledImages[index]; // Bilddaten aus dem shuffledImages-Array abrufen
 
-    const closeModalBtn = modal.querySelector(".close-modal");
-    closeModalBtn.tabIndex = 0; // Ensure close button is focusable
-    closeModalBtn.focus(); // Set initial focus to close button
+    const modal = document.getElementById("photo-modal");
+    const modalImg = document.getElementById("modal-img");
+    const modalCaption = document.getElementById("modal-caption");
+    const photoCounter = document.getElementById("photo-counter"); 
 
-    updateLikeStatus();
+    // Modal mit den entsprechenden Bilddaten füllen 
+
+    modalImg.src = imgData.url; // Bildquelle im Modal setzen
+    modalImg.alt = imgData.alt; // Alt-Text im Modal setzen
+    modalCaption.textContent = imgData.title; // Titel im Modal setzen
+
+    photoCounter.textContent = `${currentPhotoIndex + 1} / ${shuffledImages.length}`; // Fotocounter aktualisieren
+
+    modal.style.display = "flex"; // Modal anzeigen
+
+    updateLikeStatus(); // Like-Status aktualisieren, wenn Modal geöffnet wird
 }
 
-function handleClose() {
-    modal.style.display = "none";
-    document.removeEventListener("keydown", trapFocus);
-
-    const allItems = document.querySelectorAll(".photo-item");
-    if (allItems[currentPhotoIndex]) {
-        allItems[currentPhotoIndex].focus(); // Return focus to the last clicked photo
-    }
+function closeModal() {
+    const modal = document.getElementById("photo-modal");
+    modal.style.display = "none"; // Modal ausblenden
 }
 
-function showNextPhoto() {
-    currentPhotoIndex = (currentPhotoIndex + 1) % shuffledImages.length;
-    openModal();
-    updateLikeStatus();
-}
+/**
+ * @param {number} direction - Richtung der Navigation, entweder -1 für vorheriges Foto oder 1 für nächstes Foto
+ */
 
-function showPrevPhoto() {
-    currentPhotoIndex = (currentPhotoIndex - 1 + shuffledImages.length) % shuffledImages.length;
-    openModal();
-    updateLikeStatus();
-}
-
-if (nextBtn) {nextBtn.addEventListener("click", showNextPhoto);} else {console.error("Next button not found");}
-if (prevBtn) {prevBtn.addEventListener("click", showPrevPhoto);} else {console.error("Previous button not found");}
-
-if (closeModal) {
-    closeModal.addEventListener("click", handleClose);
-} else {
-    console.error("Close modal button not found");
-}
-
-window.addEventListener("click", (e) => {
-    if (e.target === modal) {
-        handleClose();
-    }
-});
-
-document.addEventListener("keydown", (event) => {
-    if (modal.style.display === "flex") {
-        if (event.key === "Escape") {
-            handleClose();
-        }
-
-        if (event.key === "ArrowRight" && modal.style.display === "flex") {
-            showNextPhoto();
-        }
-
-        if (event.key === "ArrowLeft" && modal.style.display === "flex") {
-            showPrevPhoto();
-        }
-    }
-});
-
-const focusableElementsSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
-function trapFocus(e) {
-    if (e.key !== "Tab") return;
-
-    const focusableContent = modal.querySelectorAll(focusableElementsSelector);
-    const firstFocusableElement = focusableContent[0];
-    const lastFocusableElement = focusableContent[focusableContent.length - 1];
-
-    if (e.shiftKey) {
-        if (document.activeElement === firstFocusableElement) {
-            e.preventDefault();
-            lastFocusableElement.focus();
-        }
-    } else {
-        if (document.activeElement === lastFocusableElement) {
-            e.preventDefault();
-            firstFocusableElement.focus();
-        }
-    }
+function changePhoto(direction){
+    currentPhotoIndex = (currentPhotoIndex + direction + shuffledImages.length) % shuffledImages.length; // Berechnung des neuen Index unter Berücksichtigung der Array-Länge
+    openModal(currentPhotoIndex); // Modal mit dem neuen Foto öffnen
 }
 
 function updateLikeStatus() {
+    const heartIcon = document.getElementById("heart-icon");
     const currentImgData = shuffledImages[currentPhotoIndex];
-    const likedImages = JSON.parse(localStorage.getItem("fotogram_likes") || "{}");
+    const likes = JSON.parse(localStorage.getItem("fotogram_likes")) || {}; // Objekt aus localStorage abrufen oder leeres Objekt erstellen, wenn keine Daten vorhanden sind
 
-    if (likedImages[currentImgData.id]) {
-        heartIcon.classList.add("liked");
+    if (likes[currentImgData.id]) {
+        heartIcon.classList.add("liked"); // Herz-Icon als "geliked" markieren
     } else {
-        heartIcon.classList.remove("liked");
+        heartIcon.classList.remove("liked"); // Herz-Icon als "nicht geliked" markieren
     }
 }
-
-likeBtn.addEventListener("click", toggleLike);
-likeBtn.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault(); // Prevent default scroll behavior for space key
-        toggleLike();
-    }
-});
 
 function toggleLike() {
-    const currentImgData = shuffledImages[currentPhotoIndex];
-    let likedImages = JSON.parse(localStorage.getItem("fotogram_likes") || "{}");
+    const currentImg = shuffledImages[currentPhotoIndex];
 
-    if (likedImages[currentImgData.id]) {
-        delete likedImages[currentImgData.id];
-        heartIcon.classList.remove("liked");
+    let likes = JSON.parse(localStorage.getItem("fotogram_likes")) || {}; // Objekt aus localStorage abrufen oder leeres Objekt erstellen, wenn keine Daten vorhanden sind
+
+    if (likes[currentImg.id]) {
+        delete likes[currentImg.id]; // Like entfernen, wenn bereits geliked
     } else {
-        likedImages[currentImgData.id] = true;
-        heartIcon.classList.add("liked");
+        likes[currentImg.id] = true; // Like hinzufügen, wenn noch nicht geliked
     }
 
-    heartIcon.classList.add("animating");
-    setTimeout(() => {  
-        heartIcon.classList.remove("animating");
-    }, 300);
+    localStorage.setItem("fotogram_likes", JSON.stringify(likes)); // Aktualisiertes Objekt zurück in localStorage speichern
 
-    localStorage.setItem("fotogram_likes", JSON.stringify(likedImages));
+    updateLikeStatus(); // Like-Status im Modal aktualisieren
 }
 
-renderGallery();
+function setupEventListeners() {
+
+    document.querySelector(".close-modal").addEventListener("click", closeModal); // Event-Listener für das Schließen des Modals hinzufügen
+
+    document.getElementById("photo-grid").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault(); // Standardverhalten verhindern, z.B. Scrollen bei Leertaste
+            const item = e.target.closest(".photo-item"); // Überprüfen, ob das fokussierte Element ein Foto-Item ist
+            if (item) {
+                const index = Array.from(item.parentNode.children).indexOf(item); // Index des angeklickten Foto-Items ermitteln
+                openModal(index); // Modal mit dem entsprechenden Foto öffnen
+            }
+        }
+    }); // Event-Listener für die Galerie hinzufügen, um auch per Tastatur Fotos öffnen zu können
+
+    document.getElementById("prev-photo").addEventListener("click", () => changePhoto(-1)); // Event-Listener für vorheriges Foto hinzufügen
+
+    document.getElementById("next-photo").addEventListener("click", () => changePhoto(1)); // Event-Listener für nächstes Foto hinzufügen
+
+    document.getElementById("like-btn").addEventListener("click", toggleLike); // Event-Listener für Like-Button hinzufügen
+
+
+    window.addEventListener("click", (e) => {
+        const modal = document.getElementById("photo-modal");
+        if (e.target === modal) {
+            closeModal(); // Modal schließen, wenn außerhalb des Bildes geklickt wird
+        }
+    });
+
+    window.addEventListener("keydown", (e) => {
+        const modal = document.getElementById("photo-modal");
+        if (modal.style.display !== "flex") return; // Überprüfen, ob das Modal geöffnet ist
+
+        if (e.key === "Escape" || e.key === " ") {
+            e.preventDefault(); // Standardverhalten verhindern, z.B. Scrollen bei Leertaste
+            closeModal(); // Modal schließen
+        }
+
+        if (e.key === "ArrowRight") {
+            changePhoto(1); // Zum nächsten Foto wechseln
+        }
+
+        if (e.key === "ArrowLeft") {
+            changePhoto(-1); // Zum vorherigen Foto wechseln
+        }
+    });
+}
+
+/* Der Like-Button wurde mit tabindex="-1" aus der Tastatur-Reihenfolge genommen, um einen 
+"Focus Trap" zu vermeiden. Derzeit ist er nur per Maus bedienbar. In einer zukünftigen Version 
+könnte ich hier für vollständige Barrierefreiheit/Tastaturunterstützung noch eine Lösung implementieren, 
+um den Like-Button auch per Tastatur erreichbar 
+zu machen, ohne dass Tastatur-User versehentlich Elemente im Hintergrund fokusieren */
+
+init(); // Initialisierungsfunktion aufrufen, um die Galerie zu starten 

@@ -7,15 +7,22 @@
     <link rel="icon" type="image/png" href="./img/fotogram-icon.png" />
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body id="home"> <a href="#gallery" class="skip-link">Zum Inhalt springen</a>
+  <body id="home">
+    <a href="#gallery" class="skip-link">Zum Inhalt springen</a>
 
     <header id="top">
-        <a href="#home" class="header-back-link" aria-label="Zurück zum Seitenanfang">
-      <div class="logo-area">
-        <img src="./img/fotogram-icon.png" alt="Fotogram Logo" />
-        <h1>Fotogram</h1>
-      </div>
+      <div class="header-content">
+        <a
+          href="#home"
+          class="header-back-link"
+          aria-label="Zurück zum Seitenanfang"
+        >
+          <div class="logo-area">
+            <img src="./img/fotogram-icon.png" alt="Fotogram Logo" />
+            <h1>Fotogram</h1>
+          </div>
         </a>
+      </div>
     </header>
 
     <main id="gallery" class="gallery">
@@ -27,11 +34,17 @@
       <p>&copy; 2026 Johanna Kohlberger</p>
     </footer>
 
-    <div id="photo-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-caption">
+    <div
+      id="photo-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-caption"
+    >
       <div class="modal-frame">
         <div class="modal-main-content">
           <div class="modal-header-bar">
-            <h3 id="modal-caption"></h3>
+            <h3 id="modal-caption">Fotodetails</h3> <!-- Das Modal erhält einen beschreibenden Titel, um Screenreadern und assistiven Technologien Kontext zu bieten. -->  
             <span class="close-modal">&times;</span>
           </div>
 
@@ -41,17 +54,27 @@
         </div>
 
         <div class="modal-controls">
-          <button id="prev-photo" class="control-btn" aria-label="Vorheriges Bild">&lt;</button>
+          <button
+            id="prev-photo"
+            class="control-btn"
+            aria-label="Vorheriges Bild"
+          >
+            &lt;
+          </button>
 
-          <div class="like-container" id="like-button" role="button" aria-label="Gefällt mir" tabindex="0">
+          <button id="like-btn" class="like-btn" aria-label="Gefällt mir" tabindex="-1">
             <span class="heart-icon" id="heart-icon">&#10084;</span>
-            </div>
-
+          </button>
 
           <span id="photo-counter" class="photo-counter"></span>
-          <button id="next-photo" class="control-btn" aria-label="Nächstes Bild">&gt;</button>
+          <button
+            id="next-photo"
+            class="control-btn"
+            aria-label="Nächstes Bild"
+          >
+            &gt;
+          </button>
         </div>
-
       </div>
     </div>
 
